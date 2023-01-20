@@ -1,7 +1,7 @@
 from torch.utils.data import DataLoader, random_split
 import numpy as np
 import os
-
+import pandas as pd
 from copy import deepcopy
 from urllib.parse import quote, unquote
 class Data:
@@ -194,12 +194,42 @@ class Data:
             self.copaal_veracity_valid = self.update_veracity_train_data(self, self.copaal_veracity_valid1)
 
         elif args.eval_dataset == "Dbpedia5":
-            print("to be updated")
-            self.emb_sentences_train1, self.train_set = self.get_sent_embeddings(self, data_dir + "hybrid_data/train/" + sub_dataset_path, 'trainSE.csv',
-                                                                                 self.train_set)
+            print("sentence embeddings parsing started....it may take a while...please wait.....")
+            if (os.path.exists(data_dir + "hybrid_data/train/trainSEUpdated.csv")):
+                self.emb_sentences_train1 = pd.read_csv(data_dir + "hybrid_data/train/trainSEUpdated.csv", sep="\t")
+                self.train_set = self.load_data(data_dir + "hybrid_data/train/", data_type="trainUpdated")
+                # self.emb_sentences_train1 = self.emb_sentences_train1.to_dict()
+                self.emb_sentences_train1 = self.dataframe_to_dict(self.emb_sentences_train1)
+            else:
+                self.emb_sentences_train1, self.train_set = self.get_sent_embeddings(self, data_dir + "hybrid_data/train/" + sub_dataset_path, 'trainSE.csv',
+                                                                                     self.train_set)
+                # self.save_tuples_to_file(self.emb_sentences_train1,data_dir+"hybrid_data/train/trainSEUpdated.csv")
+                df = pd.DataFrame(self.emb_sentences_train1)
+                df.to_csv(data_dir + "hybrid_data/train/trainSEUpdated.csv", index=False, sep="\t")
+                self.save_tuples_to_file(self.train_set, data_dir + "hybrid_data/train/trainUpdated.txt")
 
-            self.emb_sentences_test1, self.emb_sentences_valid1, self.test_data, self.valid_data = self.get_sent_test_valid_embeddings(
-                self, path=data_dir + "hybrid_data/test/" + sub_dataset_path, name='testSE.csv', test_data=self.test_data, valid_data=self.valid_data)
+            if (os.path.exists(data_dir + "hybrid_data/test/testSEUpdated.csv")):
+                self.emb_sentences_test1 = pd.read_csv(data_dir + "hybrid_data/test/testSEUpdated.csv", sep="\t")
+                self.test_data = self.load_data(data_dir + "hybrid_data/test/", data_type="testUpdated")
+                self.emb_sentences_valid1 = pd.read_csv(data_dir + "hybrid_data/test/validSEUpdated.csv", sep="\t")
+                self.valid_data = self.load_data(data_dir + "hybrid_data/test/", data_type="validUpdated")
+                self.emb_sentences_test1 = self.dataframe_to_dict(self.emb_sentences_test1)
+                self.emb_sentences_valid1 = self.dataframe_to_dict(self.emb_sentences_valid1)
+                # self.emb_sentences_test1 = self.emb_sentences_test1.to_dict()
+                # self.emb_sentences_valid1 = self.emb_sentences_valid1.to_dict()
+            else:
+                self.emb_sentences_test1, self.emb_sentences_valid1, self.test_data, self.valid_data = self.get_sent_test_valid_embeddings(
+                    self, path=data_dir + "hybrid_data/test/" + sub_dataset_path, name='testSE.csv', test_data=self.test_data, valid_data=self.valid_data)
+                # self.save_tuples_to_file(self.emb_sentences_test1, data_dir + "hybrid_data/test/testSEUpdated.csv")
+                self.save_tuples_to_file(self.test_data, data_dir + "hybrid_data/test/testUpdated.txt")
+                df = pd.DataFrame(self.emb_sentences_test1)
+                df.to_csv(data_dir + "hybrid_data/test/testSEUpdated.csv", index=False, sep="\t")
+                df = pd.DataFrame(self.emb_sentences_valid1)
+                df.to_csv(data_dir + "hybrid_data/test/validSEUpdated.csv", index=False, sep="\t")
+                # self.save_tuples_to_file(self.emb_sentences_valid1, data_dir + "hybrid_data/test/validSEUpdated.csv")
+                self.save_tuples_to_file(self.valid_data, data_dir + "hybrid_data/test/validUpdated.txt")
+
+
             self.emb_sentences_train = self.update_sent_train_embeddings(self, self.emb_sentences_train1)
             self.emb_sentences_test = self.update_sent_train_embeddings(self, self.emb_sentences_test1)
             self.emb_sentences_valid = self.update_sent_train_embeddings(self, self.emb_sentences_valid1)
@@ -239,6 +269,20 @@ class Data:
             idx_s, idx_p, idx_o, label = self.idx_entities[s], self.idx_relations[p], self.idx_entities[o], label
             self.idx_test_data.append([idx_s, idx_p, idx_o, label,k])
             k = k + 1
+    def dataframe_to_dict(self, df):
+        data_dict = {}
+        for i, row in df.iterrows():
+            # Extract the keys (first 3 columns) and values (remaining columns)
+            keys = i
+            values = row[0:].tolist()
+            # Add the key-value pair to the dictionary
+            data_dict[keys] = values
+
+        return data_dict.values()
+    def save_tuples_to_file(self, tuples, file_name):
+        with open(file_name, 'w') as file:
+            for t in tuples:
+                file.write(str(t[0] +"\t" + t[1] +"\t" +t[2] +"\t"+ str(True if (t[3]==1) else False)) + '\n')
 
     def is_valid_test_available(self):
         if len(self.valid_data) > 0 and len(self.test_data) > 0:
@@ -651,7 +695,7 @@ class Data:
                     emb[i] = datapoint.split('\t')
                     try:
                         if emb[i][0] != "0":
-                            emb[i][0] = self.update_entity(self, emb[i][0])
+                            emb[i][0] = self.update_entity(self, emb[i][0])    # todo same thing for other array..somehting like thisself.update_entity(self, train_data1)
                             emb[i][1] = self.update_entity(self, emb[i][1])
                             emb[i][2] = self.update_entity(self, emb[i][2])
                             if ((list(train_data1[:, 0]).__contains__("<" + emb[i][0] + ">")) and
@@ -670,39 +714,6 @@ class Data:
 
                                 train_i += 1
                                 found = True
-                                # break
-                            # for dd in train_data_copy:
-                            #     # updated because factcheck results does not contained punctuations
-                            #     sub = self.update_entity(self, dd[0]) #to be updated please
-                            #     pred = self.update_entity(self, dd[1])
-                            #     obj = self.update_entity(self, dd[2])
-                            #
-                            #     emb[i][0] = self.update_entity(self, emb[i][0])
-                            #     emb[i][1] = self.update_entity(self, emb[i][1])
-                            #     emb[i][2] = self.update_entity(self, emb[i][2])
-                            #
-                            #     if ((emb[i][0].replace(",", "") == sub.replace(",", "")) and
-                            #             (emb[i][1] == pred) and
-                            #             (emb[i][2].replace(",", "") == obj.replace(",", ""))
-                            #             or
-                            #             ('<'+emb[i][0].lower().replace(",", "")+'>' == sub.lower().replace(",", "")) and
-                            #             ('<'+emb[i][1].lower()+'>' == pred.lower()) and
-                            #             ('<'+emb[i][2].lower().replace(",", "")+'>' == obj.lower().replace(",", ""))):
-                            #         # print('train data found')
-                            #         emb[i][-1] = emb[i][-1].replace("'", "").replace("\n","")
-                            #         if (len(emb[i])) == ((768 * 3) +3 + 1):
-                            #             # because defacto scores are also appended at the end
-                            #             embeddings_train[train_i] = emb[i][:-1]
-                            #         elif (len(emb[i])) == ((768 * 3) +3):
-                            #             # emb[i][-1] = emb[i]
-                            #             embeddings_train[train_i] = emb[i]
-                            #         else:
-                            #             print("there is something fishy:"+str(emb[i]))
-                            #             exit(1)
-                            #
-                            #         train_i += 1
-                            #         found = True
-                            #         break
                             else:
                                 found = False
                                 # else:
@@ -717,8 +728,8 @@ class Data:
                     #     train_data.remove(dd)
                     # if (train_i >= 5):  # len(train_data)
                     #     break
-                    # if (train_i >= 2000):  # len(train_data)
-                    #     break
+                    if (train_i >= 8000):  # len(train_data)
+                        break
                     if found == False:
                         if (train_i >= len(train_data)): #len(train_data)
                             break
@@ -1164,8 +1175,8 @@ class Data:
                                 # print("some data missing from test and validation sets..error"+ str(emb[i]))
                                     # exit(1)
                             # else:
-                            # if test_i >= 1500:
-                            #     break
+                            if test_i >= 3500:
+                                break
                             found = False
 
                     except:

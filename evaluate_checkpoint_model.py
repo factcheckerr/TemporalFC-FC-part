@@ -125,7 +125,7 @@ elif args.eval_dataset == "Dbpedia5":
 
 for cc in clss:
     # methods = ["full-Hybrid", "KGE-only", "text-only", "path-only", "text-KGE-Hybrid", "text-path-Hybrid", "KGE-path-Hybrid"]
-    methods = ["text-KGE-Hybrid"]
+    methods = ["KGE-only","text-KGE-Hybrid"] #["KGE-only","text-KGE-Hybrid"]
     df_test = pd.DataFrame()
     df_train = pd.DataFrame()
     for cls in methods:

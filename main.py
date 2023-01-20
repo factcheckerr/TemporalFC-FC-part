@@ -11,7 +11,7 @@ def argparse_default(description=None):
                         help="dataset/complete_dataset/dbpedia34k/, dataset/")
     parser.add_argument("--storage_path", type=str, default='HYBRID_Storage')
     parser.add_argument("--eval_dataset", type=str, default='Dbpedia5',
-                        help="Available datasets: FactBench, BPDP, Dbpedia5")
+                        help="Available datasets: Dbpedia5, Yago5")
     parser.add_argument("--sub_dataset_path", type=str, default=None,
                         help="Available subpaths: bpdp/, domain/, domainrange/, mix/, property/, random/, range/,")
     parser.add_argument("--prop", type=str, default=None)
@@ -21,7 +21,7 @@ def argparse_default(description=None):
     # parser.add_argument("--deserialize_flag", type=str, default=None, help='Path of a folder for deserialization.')
 
     # Models.
-    parser.add_argument("--model", type=str, default='KGE-only',
+    parser.add_argument("--model", type=str, default='text-KGE-Hybrid',
                         help="Available models:full-Hybrid, KGE-only,text-only, text-KGE-Hybrid, path-only, text-path-Hybrid, KGE-path-Hybrid")
                         # help="Available models:Hybrid, ConEx, TransE, Hybrid, ComplEx, RDF2Vec")
 
