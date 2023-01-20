@@ -22,7 +22,7 @@ def argparse_default(description=None):
 
     # Models.
     parser.add_argument("--model", type=str, default='text-KGE-Hybrid',
-                        help="Available models:full-Hybrid, KGE-only,text-only, text-KGE-Hybrid, path-only, text-path-Hybrid, KGE-path-Hybrid")
+                        help="Available models:temporal, full-Hybrid, KGE-only,text-only, text-KGE-Hybrid, path-only, text-path-Hybrid, KGE-path-Hybrid")
                         # help="Available models:Hybrid, ConEx, TransE, Hybrid, ComplEx, RDF2Vec")
 
     parser.add_argument("--emb_type", type=str, default='Dihedron',

@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 from nn_models.path_KGE_hybrid_model import PathKGEHybridModel
 from nn_models.path_model import PathModel
+from nn_models.temporal_model import TemporalModel
 from nn_models.text_KGE_hybrid_model import TextKGEHybridModel
 from nn_models.complex import ConEx
 from nn_models.KGE_model import KGEModel
@@ -164,6 +165,9 @@ def select_model(args) -> Tuple[pl.LightningModule, AnyStr]:
 
     elif str(args.model).lower() == 'full-hybrid':
         model = FullHybridModel(args=args)
+        form_of_labelling = 'TriplePrediction'
+    elif str(args.model).lower() == 'temporal':
+        model = TemporalModel(args=args)
         form_of_labelling = 'TriplePrediction'
 
     elif str(args.model).lower() == 'kge-path-hybrid':
