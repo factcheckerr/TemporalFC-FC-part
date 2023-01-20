@@ -27,14 +27,18 @@ download and unzip data and embeddings files in the root folder of the project.
 ``` html
 pip install gdown
 
-wget https://zenodo.org/record/6523389/files/dataset.zip
+wget https://zenodo.org/record/7552968/files/dataset.zip
 
-wget https://zenodo.org/record/6523438/files/Embeddings.zip
+wget https://zenodo.org/record/7552968/files/Embeddings.zip
+
+wget https://zenodo.org/record/7552968/files/generated_predictions_and_models.zip
 
 
 unzip dataset.zip
 
 unzip Embeddings.zip
+
+unzip generated_predictions_and_models.zip
 ``` 
 
 
@@ -43,7 +47,7 @@ Note: if it gives permission denied error you can try running the commands with 
 ### 2) Regenerate data from scratch (FactCheck output)
 In case you don't want to use pre-generated data, follow this step:
 
-run FactCheck on [FactBench dataset](https://github.com/DeFacto/FactBench) using [Wikipedia](https://www.elastic.co/blog/loading-wikipedia) as a reference corpus. 
+run FactCheck on [DBpedia34k dataset](https://link.springer.com/chapter/10.1007/978-3-031-06981-9_15) and [Yago3k dataset](https://link.springer.com/chapter/10.1007/978-3-031-06981-9_15) using [Wikipedia](https://www.elastic.co/blog/loading-wikipedia) as a reference corpus. 
 
 As an input user needs output of [FactCheck](https://github.com/dice-group/FactCheck/tree/develop-for-FROCKG-branch) in json format.
 
@@ -80,7 +84,8 @@ python evaluate_checkpoint_model.py --emb_type TransE --model full-Hybrid --num_
 for differnt embeddings type(emb_type) or model type(model), you just need to change the parameters.
 
 Available temporal embeddings types:
-[Dihedron](https://arxiv.org/pdf/2008.03130.pdf), 
+[Dihedron](https://arxiv.org/pdf/2008.03130.pdf),
+
 Available non-temporal embeddings types:
 [TransE](https://everest.hds.utc.fr/lib/exe/fetch.php?media=en:cr_paper_nips13.pdf), [ComplEx](https://arxiv.org/abs/2008.03130), [RDF2Vec](https://madoc.bib.uni-mannheim.de/41307/1/Ristoski_RDF2Vec.pdf) (only for BPDP dataset), [QMult](https://arxiv.org/pdf/2106.15230.pdf).
 
@@ -88,11 +93,24 @@ Available non-temporal embeddings types:
 Available models:
 full-Hybrid
 
-Note: model names are case sensitive. So please use exact names.
+Note: model names are case-sensitive. So please use exact names.
 
 ## ReGenerate AUROC results:
 After computing evaluation results, the prediction files are saved in the "dataset/HYBRID_Storage" folder along with ground truth files.
 These files can be uploaded to a live instance of [GERBIL](http://swc2017.aksw.org/gerbil/config) (by Roder et al.) framework to produce AUROC curve scores.  
+
+## Pre-Generated AUROC results
+To view the pre-generated AUROC scores online, following are the links.
+
+DBpedia34k-Train: http://swc2017.aksw.org/gerbil/experiment?id=202301180123
+
+DBpedia34k-Test: http://swc2017.aksw.org/gerbil/experiment?id=202301180059
+
+Yago3k-Train: http://swc2017.aksw.org/gerbil/experiment?id=202301180056
+
+Yago3k-Test: http://swc2017.aksw.org/gerbil/experiment?id=202301180128
+
+Note: Prediction files can be viewed in results folder
 
 ## Future plan:
 As future work, we will exploit the modularity of TemporalFC by integrating rule-based approaches. We also plan to explore other possibilities to select the best evidence sentences.
