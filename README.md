@@ -91,7 +91,7 @@ Available non-temporal embeddings types:
 
 
 Available models:
-full-Hybrid
+temporal, full-Hybrid
 
 Note: model names are case-sensitive. So please use exact names.
 
